@@ -1,12 +1,10 @@
 class AttendancesController < ApplicationController
   
-  before_action :set_user, only: :edit_one_month
-  before_action :logged_in_user, only: [:update, :edit_one_month]
-  before_action :set_one_month, only: :edit_one_month
+  before_action :set_user, only: [:edit_one_month, :update_one_month]
+  before_action :logged_in_user, only: [:update, :edit_one_month, :update_one_month]
+  before_action :set_one_month, only: [:edit_one_month, :update_one_month]
 
 
-  
-  
   UPDATE_ERROR_MSG = "勤怠登録に失敗しました。やり直してください。"
   
   def update
@@ -36,6 +34,10 @@ class AttendancesController < ApplicationController
   def update_one_month
     ActiveRecord::Base.transaction do # トランザクションを開始します。
     attendances_params.each do |id, item|
+     if item[:started_at].present? && item[:finished_at].blank?
+      flash[:danger] = "出勤時間のみの勤怠変更はできません"
+       redirect_to attendances_edit_one_month_user_url(date: params[:date]) and return
+     end
       attendance = Attendance.find(id)
       attendance.update_attributes!(item)
     end
@@ -43,8 +45,8 @@ class AttendancesController < ApplicationController
   flash[:success] = "1ヶ月分の勤怠情報を更新しました。"
   redirect_to user_url(date: params[:date])
   rescue ActiveRecord::RecordInvalid # トランザクションによるエラーの分岐です。
-  flash[:danger] = "無効な入力データがあった為、更新をキャンセルしました。"
-  redirect_to attendances_edit_one_month_user_url(date: params[:date])
+  flash[:danger] = "指定された時間での勤怠登録はできません"
+  redirect_to attendances_edit_one_month_user_url(date: params[:date]) and return
   end
   
   
