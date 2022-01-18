@@ -1,0 +1,14 @@
+
+[1mFrom:[0m /home/ec2-user/.rvm/gems/ruby-2.6.3/gems/pry-0.13.1/lib/pry/pry_instance.rb:291 Pry#evaluate_ruby:
+
+    [1;34m286[0m: [32mdef[0m [1;34mevaluate_ruby[0m(code)
+    [1;34m287[0m:   inject_sticky_locals!
+    [1;34m288[0m:   exec_hook [33m:before_eval[0m, code, [1;36mself[0m
+    [1;34m289[0m: 
+    [1;34m290[0m:   result = current_binding.eval(code, [1;34;4mPry[0m.eval_path, [1;34;4mPry[0m.current_line)
+ => [1;34m291[0m:   set_last_result(result, code)
+    [1;34m292[0m: [32mensure[0m
+    [1;34m293[0m:   update_input_history(code)
+    [1;34m294[0m:   exec_hook [33m:after_eval[0m, result, [1;36mself[0m
+    [1;34m295[0m: [32mend[0m
+

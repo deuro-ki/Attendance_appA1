@@ -1,45 +1,74 @@
 <% provide(:title, @user.name) %>
-<%= form_with(model: @user, url: attendances_update_one_month_user_path(date: @first_day), local: true, method: :patch) do |f| %>
+<%= form_with(model: @users, url: attendances_update_one_month_user_path(date: @first_day), local: true, method: :patch) do |f| %>
   <div>
-    <h1>勤怠編集画面</h1>
+    <h1>勤怠変更申請</h1>
     <table class="table table-bordered table-condensed table-hover" id="table-attendances">
       <thead>
         <tr>
          <th rowspan>日付</th>
          <th rowspan>曜日</th>
-         <th rowspan>出勤時間</th>
-         <th rowspan>退勤時間</th>
+         <th rowspan>出社</th>
+         <th rowspan>退社</th>
+         <th rowspan>翌日</th>
          <th rowspan>在社時間</th>
          <th rowspan>備考</th>
+         <th rowspan>指示者確認</th>
         </tr>
       </thead>
       <tbody>
-        <% @attendances.each do |day| %>
-         <%= f.fields_for "attendances[]", day do |attendance| %>
+        <% @attendances.each do |attendance| %>
+         <%= f.fields_for "attendances[]", attendance do |attendance_field| %>
             <tr>
-              <td rowspan><%= l(day.worked_on, format: :short) %></td>
+              <td rowspan><%= l(attendance.worked_on, format: :short) %></td>
               <td rowspan>
-               <% if day.worked_on.wday == 6 %>
+               <% if attendance.worked_on.wday == 6 %>
                 <font color="blue">土</font>
-               <% elsif day.worked_on.wday == 0 %>
+               <% elsif attendance.worked_on.wday == 0 %>
                 <font color="red">日<font>
                <% else %>
-                <%= $days_of_the_week[day.worked_on.wday] %></td>
+                <%= $days_of_the_week[attendance.worked_on.wday] %></td>
                <% end %>
               </td>
-              <% if (Date.current < day.worked_on) %>
-               <td rowspan><%= attendance.time_field :started_at, readonly: true, class: "form-control" %></td>
-               <td rowspan><%= attendance.time_field :finished_at, readonly: true, class: "form-control" %></td>
-              <% else %>
-               <td rowspan><%= attendance.time_field :started_at, class: "form-control" %></td>
-               <td rowspan><%= attendance.time_field :finished_at, class: "form-control" %></td>
-              <% end %>
-              <td rowspan>
-                <% if day.started_at.present? && day.finished_at.present? %>
-                  <%= working_times(day.started_at, day.finished_at) %>
+              <% if Date.current <= attendance.worked_on && attendance.finished_at.blank? %>
+               <% if attendance.started_at.present? && attendance.finished_at.present? %>
+                 <td rowspan><%= attendance_field.time_field :started_at, class: "form-control", readonly: true %></td>
+                 <td rowspan><%= attendance_field.time_field :finished_at, class: "form-control", readonly: true %></td>
+               <% else %>
+                 <td rowspan><%= attendance_field.time_field :renewed_started_at, class: "form-control", readonly: true %></td>
+                 <td rowspan><%= attendance_field.time_field :renewed_finished_at, class: "form-control", readonly: true %></td>
+               <% end %>
+                 <td rowspan></td>
+                 <td colsapn>
+                <% if attendance.renewed_started_at.present? && attendance.renewed_finished_at.present? %>
+                  <%= renew_working_times(attendance.renewed_started_at, attendance.renewed_finished_at) %>
                 <% end %>
-              </td>
-              <td rowspan><%= attendance.text_field :note, class: "form-control" %></td>
+               </td>
+               <td rowspan><%= attendance_field.text_field :description, placeholder: "内容を記入してください", readonly: true, class: "form-control" %></td>
+               <td rowspan>
+                <%= attendance_field.collection_select :superior_choice_id, @attendance_apply, :id, :name, :prompt => "選択できません", disabled: 2..3 %>
+               </td>
+              <% else %>
+               <% if attendance.started_at.present? && attendance.finished_at.present? %>
+                 <td rowspan><%= attendance_field.time_field :started_at, class: "form-control" %></td>
+                 <td rowspan><%= attendance_field.time_field :finished_at, class: "form-control" %></td>
+               <% else %>
+                 <td rowspan><%= attendance_field.time_field :renewed_started_at, class: "form-control" %></td>
+                 <td rowspan><%= attendance_field.time_field :renewed_finished_at, class: "form-control" %></td>
+               <% end %>
+               <td rowspan><%= attendance_field.check_box :tomorrow, {}, "true", "false" %></td>
+               <td colsapn>
+                <% if attendance.started_at.present? && attendance.finished_at.present? && attendance.attendance_state == 2 %>
+                  <%= working_times(attendance.started_at, attendance.finished_at) %>
+                <% end %>
+                <% if attendance.renewed_started_at.present? && attendance.renewed_finished_at.present? %>
+                  <%= renew_working_times(attendance.renewed_started_at, attendance.renewed_finished_at, attendance) %>
+                <% end %>
+               </td>
+               <td rowspan><%= attendance_field.text_field :description, placeholder: "内容を記入してください", class: "form-control" %></td>
+               <td rowspan>
+                <%= attendance_field.collection_select :superior_choice_id, @attendance_apply, :id, :name, :prompt => "送信先を選択" %>
+               </td>
+              <% end %>
             </tr>
           <% end %>
         <% end %>
@@ -48,8 +77,8 @@
   </div>
   
   <div class="center">
-    <%= link_to "キャンセル", user_path(date: @first_day), class: "btn btn-lg btn-default" %>
-    <%= f.submit "編集を保存する", class: "btn btn-lg btn-info" %>
+    <%= link_to "キャンセル", user_path(date: @first_day), class: "btn btn-lg btn-primary" %>
+    <%= f.submit "編集を保存する", class: "btn btn-lg btn-primary" %>
   </div>
 <% end %>
 

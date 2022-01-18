@@ -1,0 +1,21 @@
+# == Schema Information
+#
+# Table name: bases
+#
+#  id          :integer          not null, primary key
+#  base_number :integer
+#  base_name   :string
+#  base_status :string
+#  created_at  :datetime         not null
+#  updated_at  :datetime         not null
+#
+
+one:
+  base_number: 1
+  base_name: MyString
+  base_status: MyString
+
+two:
+  base_number: 1
+  base_name: MyString
+  base_status: MyString

@@ -1,0 +1,15 @@
+
+[1mFrom:[0m /home/ec2-user/environment/Attendance_appA1/app/views/users/show.html.erb:45 ActionView::CompiledTemplates#_app_views_users_show_html_erb___3459067862770499109_70203406067720:
+
+    [1;34m40[0m:          <% end %>
+    [1;34m41[0m:         </li><br>
+    [1;34m42[0m:        <li>
+    [1;34m43[0m:          <% if @apply_attendances_count == 0 %>
+    [1;34m44[0m:          <% binding.pry %>
+ => [1;34m45[0m:            <%= link_to "[ 勤怠変更申請のお知らせ ]", attendances_edit_attendance_apply_user_path(@user), class: "text-danger", remote: true %>
+    [1;34m46[0m:            <span style="color: red; border: 3px solid #F00;">&emsp;<%= @apply_attendances_count %>件の通知があります&emsp;</span>
+    [1;34m47[0m:          <% else if @apply_attendances_count %>
+    [1;34m48[0m:            <%= link_to "[ 勤怠変更申請のお知らせ ]", attendances_edit_attendance_apply_user_path(@user), remote: true %>
+    [1;34m49[0m:           <% end %>
+    [1;34m50[0m:          <% end %>
+

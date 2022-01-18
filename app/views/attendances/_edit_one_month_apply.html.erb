@@ -1,0 +1,40 @@
+<% provide(:title, "Edit One Month Apply") %>
+<% provide(:class_text, 'edit-one-month-apply') %>
+<div class="modal-dialog modal-lg modal-dialog-center">
+  <div class="modal-content">
+      <div class="modal-body">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+          </button>
+          <%= form_with model: @user, url: attendances_update_one_month_apply_user_path(@user), local: true, method: :patch do |f| %>
+            <% @attendances.each do |user_id, attendances| %>
+              <h3 align="center" class="modal-title">【<%= User.find(user_id).name %>からの１カ月分の勤怠申請】</h3>
+              <table class="table table-bordered table-condensed" id="table-attendances">
+                  <thead>
+                    <tr>
+                      <th colspan="3">月</th>
+                      <th colspan="3">指示者確認㊞</th>
+                      <th colspan="3">変更</th>
+                      <th colspan="3">勤怠を確認する</th>
+                    </tr>
+                  </thead>
+                  <% attendances.each do |attendance| %>
+                    <%= f.fields_for "attendances[]", attendance do |day|  %>
+                      <tbody>
+                        <tr>
+                          <td colspan="3"><%= attendance.worked_on.month %>月</td>
+                          <td colspan="3"><%= day.select :one_month_status, { "申請中":1, "承認":2, "否認":3, "なし":4} , { required: true }, {class: "form-control" } %>
+                          <td colspan="3"><%= day.check_box :change_month, {}, "true", "false" %></td>
+                          <td colspan="3"><%= link_to "確認", show2_user_path(user_id), class: "btn btn-primary" %></td>
+                        </tr>
+                      </tbody>
+                    <% end %>
+                  <% end %>
+              </table>
+            <% end %>
+            <%= f.submit "変更を送信する", class: "btn btn-block btn-primary" %>
+          <% end %>
+      </div>
+  </div>
+</div>
+

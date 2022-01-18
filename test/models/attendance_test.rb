@@ -1,3 +1,44 @@
+# == Schema Information
+#
+# Table name: attendances
+#
+#  id                              :integer          not null, primary key
+#  worked_on                       :date
+#  started_at                      :datetime
+#  finished_at                     :datetime
+#  note                            :string
+#  next_day_check                  :boolean
+#  user_id                         :integer          not null
+#  contents                        :string
+#  select_superior_id              :integer
+#  superior_state                  :integer
+#  modification                    :boolean
+#  one_month_superior_id           :integer
+#  one_month_status                :integer
+#  apply_one_month                 :date
+#  finish_time                     :datetime
+#  tomorrow                        :boolean
+#  renewed_started_at              :datetime
+#  renewed_finished_at             :datetime
+#  frequent_changes_of_started_at  :datetime
+#  frequent_changes_of_finished_at :datetime
+#  change_shift                    :boolean
+#  change_month                    :boolean
+#  description                     :string
+#  attendance_state                :integer
+#  superior_choice_id              :integer
+#  one_month_superior_status       :string
+#  overwork_superior_status        :string
+#  created_at                      :datetime         not null
+#  updated_at                      :datetime         not null
+#
+# Indexes
+#
+#  index_attendances_on_one_month_superior_id  (one_month_superior_id)
+#  index_attendances_on_select_superior_id     (select_superior_id)
+#  index_attendances_on_superior_choice_id     (superior_choice_id)
+#  index_attendances_on_user_id                (user_id)
+#
 require 'test_helper'
 
 class AttendanceTest < ActiveSupport::TestCase

@@ -22,6 +22,15 @@
   margin-top: 10px;
 }
 
+.label-user-all-users {
+  margin-top: 5px;
+}
+
+.btn-user-all-users {
+  margin-top: 10px;
+}
+
+
 #table-users {
   td {
     vertical-align: middle;
@@ -50,8 +59,65 @@
 }
 
 .btn-users-show {
-  margin-top: -10px;
   margin-bottom: 10px;
+  margin: 10px, 10px;
+}
+
+.label-basic-info {
+  margin-top: 5px;
+}
+
+.btn-basic-info {
+  margin: 15px 0;
+  width: 30%;
+}
+
+.table-overwork {
+  th {
+    vertical-align: middle;
+    text-align: center;
+    font-weight: bold;
+  }
+  
+  td {
+    vertical-align: middle;
+    text-align: center;
+  }
+}
+
+.menu-notice {
+   font-weight: bold;
+   margin-bottom: 10px;
+   list-style: none;
+}
+
+#table-applicants {
+  th {
+    vertical-align: middle;
+    text-align: center;
+  }
+  
+  td {
+    vertical-align: middle;
+    text-align: center;
+  }
+}
+
+.modal-title {
+  font-style: bold;
+}
+
+
+#table-log {
+  th {
+    vertical-align: middle;
+    text-align: center;
+  }
+  
+  td {
+    vertical-align: middle;
+    text-align: center;
+  }
 }
 
 

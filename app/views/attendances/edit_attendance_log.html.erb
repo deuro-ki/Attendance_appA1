@@ -1,0 +1,39 @@
+<% provide(:title, 'Attendancce log') %>
+<h1>勤怠修正ログ</h1>
+  <%= form_with(model: @user, url: attendances_edit_attendance_log_user_path(@user), method: :patch) do |f| %>
+      <table class="table table-bordered table-condensed table-hover table-striped" id="table-log">
+        <thead>
+          <tr>
+            <th>日付</th>
+            <th>変更前出勤時間</th>
+            <th>変更後出勤時間</th>
+            <th>変更前退勤時間</th>
+            <th>変更後退勤時間</th>
+            <th>承認者</th>
+            <th>承認日</th>
+          </tr>
+        </thead>
+        
+        <tbody>
+            <% @logs.each do |attendance| %>
+             <% if attendance.user_id == current_user.id %>
+              <tr>
+                <td><%= attendance.worked_on %></td>
+                <td><%= attendance.started_at&.strftime("%H:%M") %></td>
+                <td><%= attendance.renewed_started_at&.strftime("%H:%M") %></td>
+                <td><%= attendance.finished_at&.strftime("%H:%M") %></td>
+                <td><%= attendance.renewed_finished_at&.strftime("%H:%M") %></td>
+                <td>
+                  <% if attendance.superior_choice_id == 2 && attendance.attendance_state == 2 %>
+                    <%= '上長A' %>
+                  <% elsif attendance.superior_choice_id == 3 && attendance.attendance_state == 2 %>
+                    <%= '上長B' %>
+                  <% end %>
+                </td>
+                <td><%= attendance.updated_at.strftime("%F") %></td>
+              </tr>
+            <% end %>
+            <% end %>
+        </tbody>
+      </table>
+  <% end %>

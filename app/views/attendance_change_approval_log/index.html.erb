@@ -1,0 +1,64 @@
+<% provide(:title, 'Attendancce Change Approval Log') %>
+<% if params[:year] != "" && params[:month] != "" && params[:year] != nil && params[:month] != nil %>
+  <h1>勤怠修正ログ</h1>
+  <h2 class = "term">(検索期間:<%= "#{params[:year]}" %>年<%= "#{params[:month]}" %>月)</h2>
+<% else if params[:year] == "" && params[:month] == "" && params[:year] == nil && params[:month] == nil %>
+  <h1>勤怠修正ログ</h1>
+<% else %>
+  <h1>勤怠修正ログ</h1>
+<% end %>
+<% end %>
+<%= form_tag(attendance_change_approval_log_index_path, method: :get) do %>
+     <%= select_tag 'year', options_for_select([['年を選択',''],['2021'],['2022'],['2023'],['2024'],['2025']], selected: params[:year]) %>
+     <%= select_tag 'month', options_for_select([['月を選択', ''],['1'],['2'],['3'],['4'],['5'],['6'],['7'],['8'],['9'],['10'],['11'],['12']], selected: params[:month]) %>
+     &nbsp;
+     <%= submit_tag '検索', :year => nil, :month => nil, class: "btn btn-sm btn-primary" %>
+<% end %>
+<br>
+      <table class="table table-bordered table-condensed table-hover table-striped" id="table-log">
+        <thead>
+          <tr>
+            <th>日付</th>
+            <th>変更前出勤時間</th>
+            <th>変更前退勤時間</th>
+            <th>変更後出勤時間</th>
+            <th>変更後退勤時間</th>
+            <th>申請者</th>
+            <th>承認者</th>
+            <th>承認日</th>
+          </tr>
+        </thead>
+        
+        <tbody>
+          <% unless params[:year].nil? && params[:month].nil? %>
+            <% @attendance_change_approval_logs.each do |attendance_change_approval_log| %>
+              <tr>
+                  <td><%= attendance_change_approval_log.worked_on %></td>
+                  <td>
+                    <% if attendance_change_approval_log.started_at.present? %>
+                      <%= attendance_change_approval_log.started_at&.strftime("%H:%M") %>
+                    <% end %>
+                  </td>
+                  <td>
+                    <% if attendance_change_approval_log.finished_at.present? %>
+                      <%= attendance_change_approval_log.finished_at&.strftime("%H:%M") %>
+                    <% end %>
+                  </td>
+                  <td>
+                    <% if attendance_change_approval_log.renewed_started_at.present? %>
+                      <%= attendance_change_approval_log.renewed_started_at&.strftime("%H:%M") %>
+                    <% end %>
+                  </td>
+                  <td>
+                    <% if attendance_change_approval_log.renewed_finished_at.present? %>
+                      <%= attendance_change_approval_log.renewed_finished_at&.strftime("%H:%M") %>
+                    <% end %>
+                  </td>
+                  <td><%= attendance_change_approval_log.user.name %></td>
+                  <td><%= attendance_change_approval_log.approval_user.name %></td>
+                  <td><%= attendance_change_approval_log.approval_date.strftime("%F") %></td>
+              </tr>
+            <% end %>
+          <% end %>
+        </tbody>
+      </table>

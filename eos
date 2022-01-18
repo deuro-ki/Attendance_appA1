@@ -1,0 +1,15 @@
+
+[1mFrom:[0m /home/ec2-user/environment/Attendance_appA1/app/views/users/show.html.erb:245 ActionView::CompiledTemplates#_app_views_users_show_html_erb___377145597315395196_69890614536620:
+
+    [1;34m240[0m:               <% end %>
+    [1;34m241[0m:               <% end %>
+    [1;34m242[0m:                 <%= f.collection_select :one_month_superior, @superiors, :id, :name, :prompt => "送信先を選択" %>
+    [1;34m243[0m:               <%= f.submit "申請", remote: true, class: "btn btn-block btn-primary" %>
+    [1;34m244[0m:               <% binding.pry %>
+ => [1;34m245[0m:             <% end %>
+    [1;34m246[0m: 
+    [1;34m247[0m:         </td>
+    [1;34m248[0m:       </tr>
+    [1;34m249[0m:     </tfoot>
+    [1;34m250[0m:   </table>
+

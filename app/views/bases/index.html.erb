@@ -1,0 +1,37 @@
+<% provide(:title, 'All Bases') %>
+<% provide(:class_text, 'base') %>
+<% provide(:button_text, '作成する') %>
+<h1>拠点一覧</h1>
+
+  <table class="table table-bordered table-condensed table-hover" id="table-bases">
+    <thead>
+      <tr>
+        <th></th>
+        <th></th>
+        <th class="center">拠点番号</th>
+        <th class="center">拠点名</th>
+        <th class="center">勤怠種類</th>
+      </tr>
+    </thead>
+    
+    <tbody>
+        <% @bases.each do |base| %>
+          <tr>
+            <td>
+              <%= link_to "編集", edit_basis_path(base), class: "btn btn-md btn-primary" %>
+            </td>
+            <td>
+              <%= link_to "削除", base, method: :delete, data: {confirm: "削除してよろしいですか？"}, class: "btn btn-md btn-primary" %>
+            </td>
+            <td class="center"><%= base.base_number %></td>
+            <td class="center"><%= base.base_name %></td>
+            <td class="center"><%= base.base_status %></td>
+          </tr>
+        <% end %>
+    </tbody>
+  </table>
+  
+  <%= link_to "拠点情報追加", new_base_info_basis_path(@bases), remote: true, class: "btn btn-lg btn-primary" %>
+  
+  <div id="new-base-info" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
+  
