@@ -23,7 +23,6 @@
             <th>変更前退勤時間</th>
             <th>変更後出勤時間</th>
             <th>変更後退勤時間</th>
-            <th>申請者</th>
             <th>承認者</th>
             <th>承認日</th>
           </tr>
@@ -54,7 +53,6 @@
                       <%= attendance_change_approval_log.renewed_finished_at&.strftime("%H:%M") %>
                     <% end %>
                   </td>
-                  <td><%= attendance_change_approval_log.user.name %></td>
                   <td><%= attendance_change_approval_log.approval_user.name %></td>
                   <td><%= attendance_change_approval_log.approval_date.strftime("%F") %></td>
               </tr>

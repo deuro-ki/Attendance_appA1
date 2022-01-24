@@ -48,7 +48,7 @@ class AttendancesController < ApplicationController
     ActiveRecord::Base.transaction do # トランザクションを開始します。
     attendances_params.each do |id, item|
       #binding.pry
-    if item[:renewed_started_at] != "" && item[:renewed_finished_at] != "" && item[:description] == "" && item[:superior_choice_id] == ""
+    if item[:renewed_started_at] == "" && item[:renewed_finished_at] == "" && item[:description] != "" && item[:superior_choice_id] != ""
       next
     end
      if item[:renewed_started_at].present? && item[:renewed_finished_at].blank?
@@ -59,14 +59,14 @@ class AttendancesController < ApplicationController
       flash[:danger] = "退勤時間のみの勤怠変更はできません"
        redirect_to attendances_edit_one_month_user_url(date: params[:date]) and return
      end
-     if item[:renewed_started_at].present? && item[:renewed_finished_at].present? && item[:superior_choice_id].blank? && item[:description].blank?
-      flash[:danger] = "備考・指示者確認を入力してください。"
+     if item[:renewed_started_at].present? && item[:renewed_finished_at].present? && item[:superior_choice_id] == "" && item[:description] == ""
+      flash[:danger] = "備考・指示者確認㊞を入力してください。"
        redirect_to attendances_edit_one_month_user_url(date: params[:date]) and return
      end
-     #if item[:superior_choice_id].present? && item[:description].present? && item[:renewed_started_at] == "" && item[:renewed_finished_at] == ""
-      #flash[:danger] = "出勤時間・退勤時間を入力してください。"
-       #redirect_to attendances_edit_one_month_user_url(date: params[:date]) and return
-     #end
+     if item[:superior_choice_id] != "" && item[:description] != "" && item[:renewed_started_at] == "" && item[:renewed_finished_at] == ""
+      flash[:danger] = "出勤時間・退勤時間を入力してください。"
+       redirect_to attendances_edit_one_month_user_url(date: params[:date]) and return
+     end
      
      if item[:superior_choice_id].present? && item[:description].blank?
       flash[:danger] = "備考の記載がありません。"
