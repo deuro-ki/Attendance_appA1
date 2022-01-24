@@ -47,6 +47,10 @@ class Attendance < ApplicationRecord
   
   validates :worked_on, presence: true
   validates :note, length: { maximum: 50 }
+  
+  validates :finish_time, presence: true, on: :update_overwork_request
+  validates :contents, presence: true, length: {minimum: 3}, on: :update_overwork_request
+  validates :select_superior_id, presence: true, on: :update_overwork_request
 
 # 出勤時間が存在しない場合、退勤時間は無効
   validate :finished_at_is_invalid_without_a_started_at
@@ -55,8 +59,9 @@ class Attendance < ApplicationRecord
   #validates :modification, inclusion: {in: [true]}
 
   def started_at_than_finished_at_fast_if_invalid
-    if started_at.present? && finished_at.present?
-      errors.add(:started_at, "より早い退勤時間は無効です") if started_at > finished_at
+    #binding.pry
+    if started_at.present? && finished_at.present? 
+      errors.add(:started_at, "より早い退勤時間は無効です") if started_at > finished_at && tomorrow == false
     end
   end
 

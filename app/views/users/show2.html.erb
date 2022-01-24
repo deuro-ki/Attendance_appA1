@@ -72,18 +72,18 @@
             <% end %>
           </td>
           <td>
-            <% if attendance.started_at.present? && attendance.renewed_started_at.blank? %>
+            <% if attendance.started_at.present? && attendance.renewed_started_at.present? %>
               <%= attendance.started_at.hour %>
-            <% else if attendance.renewed_started_at.present? && attendance.attendance_state == 2 %>
-              <%= attendance.renewed_started_at.hour %>
+            <% else if attendance.started_at.present? && attendance.attendance_state == 2 %>
+              <%= attendance.started_at.hour %>
              <% end %>
             <% end %>
           </td>
           <td>
-            <% if attendance.started_at.present? && attendance.renewed_started_at.blank? %>
+            <% if attendance.started_at.present? && attendance.renewed_started_at.present? %>
               <%= format_min(attendance.started_at) %>
-            <% else if attendance.renewed_started_at.present? && attendance.attendance_state == 2 %>
-              <%= format_min(attendance.renewed_started_at) %>
+            <% else if attendance.started_at.present? && attendance.attendance_state == 2 %>
+              <%= format_min(attendance.started_at) %>
              <% end %>
             <% end %>
           </td>
@@ -123,18 +123,18 @@
               <% end %>
           </td>
           <td>
-            <% if attendance.finished_at.present? && attendance.renewed_finished_at.blank? %>
+            <% if attendance.finished_at.present? && attendance.renewed_finished_at.present? %>
              <%= attendance.finished_at.hour %>
-            <% else if attendance.renewed_finished_at.present? && attendance.attendance_state == 2 %>
-             <%= attendance.renewed_finished_at.hour %>
+            <% else if attendance.finished_at.present? && attendance.attendance_state == 2 %>
+             <%= attendance.finished_at.hour %>
              <% end %>
             <% end %>
           </td>
           <td>
-            <% if attendance.finished_at.present? && attendance.renewed_finished_at.blank? %>
+            <% if attendance.finished_at.present? && attendance.renewed_finished_at.present? %>
              <%= format_min(attendance.finished_at) %>
-            <% else if attendance.renewed_finished_at.present? && attendance.attendance_state == 2 %>
-             <%= format_min(attendance.renewed_finished_at) %>
+            <% else if attendance.finished_at.present? && attendance.attendance_state == 2 %>
+             <%= format_min(attendance.finished_at) %>
              <% end %>
             <% end %>
           </td>

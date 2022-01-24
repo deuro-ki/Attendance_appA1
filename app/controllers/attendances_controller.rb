@@ -94,25 +94,6 @@ class AttendancesController < ApplicationController
        redirect_to attendances_edit_one_month_user_url(date: params[:date]) and return
       end
       
-      #if item[:renewed_started_at] == "" && item[:renewed_finished_at] == "" && item[:description].present? && item[:superior_choice_id].present?
-        #flash[:danger] = "出勤時間・退勤時間を入力してください。"
-       #redirect_to attendances_edit_one_month_user_url(date: params[:date]) and return
-      #end
-     #if item[:superior_choice_id] == "" && item[:description] == "" 
-      #flash[:danger] = "時間入力エラーの為、勤怠変更申請できません。"
-       #redirect_to attendances_edit_one_month_user_url(date: params[:date]) and return
-     #end
-     
-     #if item[:superior_choice_id] != "" && item[:description] != ""
-       #flash[:danger] = ""
-       #redirect_to attendances_edit_one_month_user_url(date: params[:date]) and return
-     #end
-     #if item[:superior_choice_id] == "" && item[:description] == ""
-       #flash[:danger] = "備考と指示者確認が入力されていない為勤怠変更に失敗しました。"
-       #redirect_to attendances_edit_one_month_user_url(date: params[:date]) and return
-     #end
-
-  
       attendance = Attendance.find_by(id: id)
       if attendance.attendance_state == 2 #承認
         attendance.attributes = item
@@ -145,41 +126,15 @@ class AttendancesController < ApplicationController
   def update_overwork_request
     @user = User.find(params[:user_id])
     @attendance = Attendance.find(params[:id])
-    #binding.pry
-    if @attendance.update(update_overwork_request_params)
-      if @attendance.finish_time.blank? && 
-        flash[:danger] = "終了時間を入力してください。"
-        @attendance.update(finish_time: nil,
-                          next_day_check: nil,
-                          contents: nil,
-                          select_superior_id: nil
-        )
-        redirect_to user_url(@user) and return
-      end
-      
-      if @attendance.select_superior_id != "" && @attendance.contents == ""
-        flash[:danger] = "業務処理内容を入力してください"
-        @attendance.update(finish_time: nil,
-                          next_day_check: nil,
-                          contents: nil,
-                          select_superior_id: nil
-        )
-        redirect_to user_url(@user) and return
-      end
-      
-      if @attendance.select_superior_id == nil
-        flash[:danger] = "指示者確認㊞を選択してください。"
-        @attendance.update(finish_time: nil,
-                          next_day_check: nil,
-                          contents: nil,
-                          select_superior_id: nil
-        )
-        redirect_to user_url(@user) and return
-      end
-      #binding.pry
+    @attendance.attributes = update_overwork_request_params
+    if @attendance.save(context: :update_overwork_request)
+      flash[:success] = "残業を申請しました。"
+      redirect_to user_url(@user)
+    else
+      #if @attendance.finish_time
+      flash[:danger] = "残業申請に失敗しました。"
+      redirect_to user_url(@user)
     end
-    flash[:success] = "残業を申請しました。"
-    redirect_to user_url(@user)
   end
   
 
@@ -205,7 +160,14 @@ class AttendancesController < ApplicationController
       update_one_month_apply_params.each do |id, item|
         if ActiveRecord::Type::Boolean.new.cast(item[:change_month]) && item[:one_month_status] == "2"
           attendance = Attendance.find(id)
-          attendance.update!(item)
+          attendance.update!(renewed_started_at: started_at,
+                             renewed_finished_at: attendance.finished_at,
+                               started_at: nil,
+                               finished_at: nil,
+                               tomorrow: item[:tomorrow],
+                               description: item[:description],
+                               superior_choice_id: item[:superior_choice_id]
+            )
         end
         if ActiveRecord::Type::Boolean.new.cast(item[:change_month]) && item[:one_month_status] == "1"
           flash[:danger] = "指示者確認㊞ステータスを変更してください。"

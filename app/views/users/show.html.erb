@@ -179,19 +179,29 @@
           </td>
           <td><%= attendance.description %></td>
           <td>
-            <%= attendance.finish_time.hour if attendance.finish_time.present? %>
+            <% if attendance.finish_time.present? %>
+              <%= attendance.finish_time.hour %>
+            <% end %>
           </td>
-          <td><%= format_min(attendance.finish_time) if attendance.finish_time.present? %></td>
+          <td>
+            <% if attendance.finish_time.present? %>
+             <%= format_min(attendance.finish_time) %>
+            <% end %>
+          </td>
           <td>
             <% if attendance.finish_time.present? && @user.designated_work_end_time.present? %>
              <%= overtime_info(@user.designated_work_end_time, attendance.finish_time, attendance) %>
             <% end %>
           </td>
-          <td><%= attendance.contents %></td>
           <td>
-            <% if attendance.select_superior_id == 2 && attendance.contents.present? && attendance.superior_state == 1 %>
+            <% if attendance.contents.present? %>
+              <%= attendance.contents %>
+            <% end %>
+          </td>
+          <td>
+            <% if attendance.select_superior_id == 2 && attendance.finish_time.present? && attendance.contents.present? && attendance.select_superior_id.present? && attendance.superior_state == 1 %>
              <%= "上長Aに残業申請中" %><br>
-            <% elsif attendance.select_superior_id == 3 && attendance.contents.present? && attendance.superior_state == 1 %>
+            <% elsif attendance.select_superior_id == 3 && attendance.finish_time.present? && attendance.contents.present? && attendance.select_superior_id.present? && attendance.superior_state == 1 %>
              <%= "上長Bに残業申請中" %><br>
             <% end %>
             <% if attendance.superior_state == 2 %>

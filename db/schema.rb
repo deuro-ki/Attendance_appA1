@@ -79,11 +79,11 @@ ActiveRecord::Schema.define(version: 20211227114337) do
     t.string "remember_digest"
     t.boolean "admin", default: false, null: false
     t.string "department"
-    t.datetime "basic_time", default: "2022-01-17 23:00:00", null: false
-    t.datetime "work_time", default: "2022-01-17 22:30:00", null: false
+    t.datetime "basic_time", default: "2022-01-22 23:00:00", null: false
+    t.datetime "work_time", default: "2022-01-22 22:30:00", null: false
     t.boolean "superior", default: false, null: false
-    t.datetime "designated_work_start_time", default: "2022-01-18 00:00:00", null: false
-    t.datetime "designated_work_end_time", default: "2022-01-18 09:00:00", null: false
+    t.datetime "designated_work_start_time", default: "2022-01-23 00:00:00", null: false
+    t.datetime "designated_work_end_time", default: "2022-01-23 09:00:00", null: false
     t.datetime "finish_time"
     t.string "affiliation"
     t.integer "employee_number"

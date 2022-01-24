@@ -119,12 +119,16 @@ class UsersController < ApplicationController
       csv << header
       @attendances.each do |attendance|
         #binding.pry
-        if attendance.renewed_started_at.present? && attendance.renewed_finished_at.present? && attendance.attendance_state == 2
-            values = [l(attendance.worked_on, format: :short), $days_of_the_week[attendance.worked_on.wday], attendance&.started_at&.strftime('%H:%M'), attendance&.renewed_started_at&.strftime('%H:%M'),attendance&.finished_at&.strftime('%H:%M'), attendance&.renewed_finished_at&.strftime('%H:%M')]
-            csv << values
-        else
+        if attendance.started_at.present? && attendance.finished_at.present? && attendance.attendance_state == 1 
             values = [l(attendance.worked_on, format: :short), $days_of_the_week[attendance.worked_on.wday], attendance&.started_at&.strftime('%H:%M'), attendance&.finished_at&.strftime('%H:%M')]
             csv << values
+        else if attendance.started_at.present? && attendance.finished_at.present? && attendance.attendance_state == 2
+            values = [l(attendance.worked_on, format: :short), $days_of_the_week[attendance.worked_on.wday], attendance&.started_at&.strftime('%H:%M'), attendance&.finished_at&.strftime('%H:%M')]
+            csv << values
+        else
+            values = [l(attendance.worked_on, format: :short), $days_of_the_week[attendance.worked_on.wday]]
+            csv << values
+        end
         end
       end
     end

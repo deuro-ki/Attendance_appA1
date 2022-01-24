@@ -9,7 +9,7 @@ class AttendanceChangeApprovalLogController < ApplicationController
       else
         from = "#{params[:year]}/#{params[:month]}/01".to_date
         to = from.end_of_month
-        @attendance_change_approval_logs = current_user.attendance_change_approval_logs.where(worked_on: from..to).order(approval_date: 'ASC', worked_on: 'ASC')
+        @attendance_change_approval_logs = current_user.attendance_change_approval_logs.where(worked_on: from..to).order(worked_on: 'ASC')
       #binding.pry
       end
   end

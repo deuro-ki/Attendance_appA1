@@ -63,7 +63,7 @@
                           <td><%= format_min(attendance.renewed_finished_at) if attendance.renewed_finished_at.present? %> </td>
                           <td><%= attendance.description %></td>
                           <td><%= attendance_field.select :attendance_state, {"申請中": 1, "承認": 2, "否認": 3, "なし": 4}, class: "form-control", required: true %></td>
-                          <td><%= attendance_field.check_box :change_shift, {}, "true", "false" %></td>
+                          <td><%= attendance_field.check_box :change_shift, checked: false %></td>
                           <td><%= link_to "確認", show2_user_path(user), class: "btn btn-primary" %></td>
                         </tr>
                       </tbody>

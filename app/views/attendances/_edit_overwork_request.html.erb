@@ -36,7 +36,7 @@
                   <td><%= f.time_field :finish_time, { include_blank: true, class: "imput-sm" } %></td>
                   <td><%= f.check_box :next_day_check, {}, "true", "false" %></td>
                   <td><%= f.text_field :contents, class: "form-control" %></td>
-                  <td><%= f.collection_select :select_superior_id, @over_apply, :id, :name, :prompt => "送信先を選択" %></td>
+                  <td><%= f.collection_select :select_superior_id, @over_apply, :id, :name, {:prompt => "送信先を選択"} %></td>
                 </tr>
               </tbody>
             </table>

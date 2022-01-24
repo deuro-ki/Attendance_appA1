@@ -31,11 +31,11 @@
               </td>
               <% if Date.current <= attendance.worked_on && attendance.finished_at.blank? %>
                <% if attendance.started_at.present? && attendance.finished_at.present? %>
-                 <td rowspan><%= attendance_field.time_field :started_at, class: "form-control", readonly: true %></td>
-                 <td rowspan><%= attendance_field.time_field :finished_at, class: "form-control", readonly: true %></td>
-               <% else %>
                  <td rowspan><%= attendance_field.time_field :renewed_started_at, class: "form-control", readonly: true %></td>
                  <td rowspan><%= attendance_field.time_field :renewed_finished_at, class: "form-control", readonly: true %></td>
+               <% else %>
+                 <td rowspan><%= attendance_field.time_field :started_at, class: "form-control", readonly: true %></td>
+                 <td rowspan><%= attendance_field.time_field :finished_at, class: "form-control", readonly: true %></td>
                <% end %>
                  <td rowspan></td>
                  <td colsapn>
@@ -48,15 +48,13 @@
                 <%= attendance_field.collection_select :superior_choice_id, @attendance_apply, :id, :name, :prompt => "選択できません", disabled: 2..3 %>
                </td>
               <% else %>
-               <% if attendance.started_at.present? && attendance.finished_at.present? %>
-                 <td rowspan><%= attendance_field.time_field :started_at, class: "form-control" %></td>
-                 <td rowspan><%= attendance_field.time_field :finished_at, class: "form-control" %></td>
-               <% else %>
-                 <td rowspan><%= attendance_field.time_field :renewed_started_at, class: "form-control" %></td>
-                 <td rowspan><%= attendance_field.time_field :renewed_finished_at, class: "form-control" %></td>
-               <% end %>
+               <td rowspan><%= attendance_field.time_field :renewed_started_at, class: "form-control" %></td>
+               <td rowspan><%= attendance_field.time_field :renewed_finished_at, class: "form-control" %></td>
                <td rowspan><%= attendance_field.check_box :tomorrow, {}, "true", "false" %></td>
                <td colsapn>
+                <% if attendance.started_at.present? && attendance.finished_at.present? && attendance.attendance_state.nil? %>
+                  <%= working_times(attendance.started_at, attendance.finished_at) %>
+                <% end %>
                 <% if attendance.started_at.present? && attendance.finished_at.present? && attendance.attendance_state == 2 %>
                   <%= working_times(attendance.started_at, attendance.finished_at) %>
                 <% end %>

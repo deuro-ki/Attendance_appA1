@@ -43,7 +43,7 @@
                               <td><%= overtime_info(user.designated_work_end_time, attendance.finish_time, attendance) %></td>
                               <td><%= attendance.contents %></td>
                               <th><%= attendance_field.select :superior_state, {"申請中": 1, "承認": 2, "否認": 3, "なし": 4}, class: "form-control", required: true %></th>
-                              <th><%= attendance_field.check_box :modification, {}, "true", "false" %></th>
+                              <th><%= attendance_field.check_box :modification, checked: false %></th>
                               <th><%= link_to "確認", show2_user_path(user), class: "btn btn-primary" %></th>
                             </tr>
                           </tbody>
