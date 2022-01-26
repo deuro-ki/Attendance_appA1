@@ -1,7 +1,12 @@
 module AttendancesHelper
-  def working_times(start, finish)
-    #format("%.2f", (((finish - start) / 60) / 60.to_f * 0.6))
-    format("%.2f", (((finish - start) / 60) / 60.0))
+  def working_times(start, finish, attendance)
+    if attendance.tomorrow
+      #format("%.2f", (((renewed_finish - renewed_start) / 60) / 60.to_f * 0.6) + 24)
+      format("%.2f", (((finish - start) / 60) / 60.0) + 24)
+    else
+      #format("%.2f", (((finish - start) / 60) / 60.to_f * 0.6))
+      format("%.2f", (((finish - start) / 60) / 60.0))
+    end
   end
   
   def renew_working_times(renewed_start, renewed_finish, attendance)
@@ -14,15 +19,13 @@ module AttendancesHelper
     end
   end
   
-  def frequent_changes_of_working_times(frequent_start, frequent_finish, attendance)
+  def checked_working_times(checked_start, checked_finish, attendance)
     if attendance.tomorrow
-      format("%.2f", (((frequent_finish - frequent_start) / 60) / 60.0) + 24)
+      format("%.2f", (((checked_finish - checked_start) / 60) / 60.0) + 24)
     else
-      format("%.2f", (((frequent_finish - frequent_start) / 60) / 60.0))
+      format("%.2f", (((checked_finish - checked_start) / 60) / 60.0))
     end
   end
-  
-  
   
   
   def format_min(time)

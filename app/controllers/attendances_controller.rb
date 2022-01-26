@@ -85,6 +85,15 @@ class AttendancesController < ApplicationController
        redirect_to attendances_edit_one_month_user_url(date: params[:date]) and return
       end
       
+      if item[:renewed_started_at].present? && item[:renewed_finished_at].blank?
+      flash[:danger] = "出勤時間のみの勤怠変更はできません"
+       redirect_to attendances_edit_one_month_user_url(date: params[:date]) and return
+      end
+      if item[:renewed_started_at].blank? && item[:renewed_finished_at].present?
+      flash[:danger] = "退勤時間のみの勤怠変更はできません"
+       redirect_to attendances_edit_one_month_user_url(date: params[:date]) and return
+      end
+      
       if item[:started_at].present? && item[:finished_at].blank?
       flash[:danger] = "出勤時間のみの勤怠変更はできません"
        redirect_to attendances_edit_one_month_user_url(date: params[:date]) and return
@@ -93,7 +102,7 @@ class AttendancesController < ApplicationController
       flash[:danger] = "退勤時間のみの勤怠変更はできません"
        redirect_to attendances_edit_one_month_user_url(date: params[:date]) and return
       end
-      
+
       attendance = Attendance.find_by(id: id)
       if attendance.attendance_state == 2 #承認
         attendance.attributes = item
@@ -111,8 +120,9 @@ class AttendancesController < ApplicationController
   end
   flash[:success] = "勤怠変更を申請しました。"
   redirect_to user_url(date: params[:date])
-  #rescue ActiveRecord::RecordInvalid # トランザクションによるエラーの分岐です。
-  #redirect_to attendances_edit_one_month_user_url(date: params[:date]) and return
+  rescue ActiveRecord::RecordInvalid # トランザクションによるエラーの分岐です。
+  flash[:danger] = "出勤時間より早い退勤時間は無効です。"
+  redirect_to attendances_edit_one_month_user_url(date: params[:date]) and return
   end
   
   def edit_overwork_request
@@ -160,14 +170,7 @@ class AttendancesController < ApplicationController
       update_one_month_apply_params.each do |id, item|
         if ActiveRecord::Type::Boolean.new.cast(item[:change_month]) && item[:one_month_status] == "2"
           attendance = Attendance.find(id)
-          attendance.update!(renewed_started_at: started_at,
-                             renewed_finished_at: attendance.finished_at,
-                               started_at: nil,
-                               finished_at: nil,
-                               tomorrow: item[:tomorrow],
-                               description: item[:description],
-                               superior_choice_id: item[:superior_choice_id]
-            )
+          attendance.update!(one_month_status: item[:one_month_status])
         end
         if ActiveRecord::Type::Boolean.new.cast(item[:change_month]) && item[:one_month_status] == "1"
           flash[:danger] = "指示者確認㊞ステータスを変更してください。"

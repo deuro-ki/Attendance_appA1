@@ -9,11 +9,11 @@
 #  remember_digest            :string
 #  admin                      :boolean          default(FALSE), not null
 #  department                 :string
-#  basic_time                 :datetime         default(Sun, 23 Jan 2022 08:00:00 JST +09:00), not null
-#  work_time                  :datetime         default(Sun, 23 Jan 2022 07:30:00 JST +09:00), not null
+#  basic_time                 :datetime         default(Wed, 26 Jan 2022 08:00:00 JST +09:00), not null
+#  work_time                  :datetime         default(Wed, 26 Jan 2022 07:30:00 JST +09:00), not null
 #  superior                   :boolean          default(FALSE), not null
-#  designated_work_start_time :datetime         default(Sun, 23 Jan 2022 09:00:00 JST +09:00), not null
-#  designated_work_end_time   :datetime         default(Sun, 23 Jan 2022 18:00:00 JST +09:00), not null
+#  designated_work_start_time :datetime         default(Wed, 26 Jan 2022 09:00:00 JST +09:00), not null
+#  designated_work_end_time   :datetime         default(Wed, 26 Jan 2022 18:00:00 JST +09:00), not null
 #  finish_time                :datetime
 #  affiliation                :string
 #  employee_number            :integer
@@ -43,7 +43,8 @@ class User < ApplicationRecord
                     uniqueness: true
                     
   validates :affiliation, length: { in: 3..30 }, allow_blank: true
-  validates :employee_number, length: {maximum: 4}
+  validates :employee_number, length: {maximum: 4}, uniqueness: true, allow_blank: true
+  validates :uid, uniqueness: true, allow_blank: true
   validates :basic_time, presence: true
   validates :designated_work_start_time, presence: true
   validates :designated_work_end_time, presence: true

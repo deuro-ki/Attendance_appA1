@@ -194,11 +194,12 @@ class UsersController < ApplicationController
        redirect_to user_path(@user)
       end
     else
-      #if current_user.admin?
-       #render :edit2
-      #else
+      if current_user.admin?
+       flash[:danger] = "登録内容に不備がある為、登録に失敗しました。"
+       redirect_to users_path
+      else
        render :edit
-      #end
+      end
     end
   end
   

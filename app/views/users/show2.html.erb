@@ -140,16 +140,16 @@
           </td>
           <td>
             <% if attendance.started_at.present? && attendance.finished_at.present? && attendance.renewed_started_at.blank? && attendance.renewed_finished_at.blank? %>
-             <%= str_times = working_times(attendance.started_at, attendance.finished_at) %>
+             <%= str_times = working_times(attendance.started_at, attendance.finished_at, attendance) %>
              <% @total_working_times = @total_working_times.to_f + str_times.to_f %>
             <% end %>
-            <% if attendance.renewed_started_at.present? && attendance.renewed_finished_at.present? && attendance.attendance_state == 2 %>
+            <% if attendance.renewed_finished_at.present? %>
              <%= str_times = renew_working_times(attendance.renewed_started_at, attendance.renewed_finished_at, attendance) %>
              <% @renewed_working_times = @renewed_working_times.to_f + str_times.to_f %>
             <% end %>
           </td>
           <td>
-            <% if attendance.renewed_finished_at.present? && attendance.attendance_state == 2 %>
+            <% if attendance.finished_at.present? && attendance.attendance_state == 2 %>
               <%= attendance.description %>
             <% end %>
           </td>
@@ -183,7 +183,9 @@
       <tr>
         <td><%= @attendances.count %></td>
         <td colspan="2"><%= format_basic_info(@user.work_time).to_f * @worked_sum %></td>
-        <td colspan="6"><%= format("%.2f", @total_working_times.to_f) %></td>
+        <td colspan="6">
+          <%= format("%.2f", @total_working_times.to_f) %>
+        </td>
         <td></td>
         <td></td>
         <td colspan="5">

@@ -52,11 +52,8 @@
                <td rowspan><%= attendance_field.time_field :renewed_finished_at, class: "form-control" %></td>
                <td rowspan><%= attendance_field.check_box :tomorrow, {}, "true", "false" %></td>
                <td colsapn>
-                <% if attendance.started_at.present? && attendance.finished_at.present? && attendance.attendance_state.nil? %>
-                  <%= working_times(attendance.started_at, attendance.finished_at) %>
-                <% end %>
-                <% if attendance.started_at.present? && attendance.finished_at.present? && attendance.attendance_state == 2 %>
-                  <%= working_times(attendance.started_at, attendance.finished_at) %>
+                <% if attendance.started_at.present? && attendance.finished_at.present? %>
+                  <%= working_times(attendance.started_at, attendance.finished_at, attendance) %>
                 <% end %>
                 <% if attendance.renewed_started_at.present? && attendance.renewed_finished_at.present? %>
                   <%= renew_working_times(attendance.renewed_started_at, attendance.renewed_finished_at, attendance) %>
