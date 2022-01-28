@@ -60,16 +60,23 @@ class Attendance < ApplicationRecord
   #validates :modification, inclusion: {in: [true]}
 
   def started_at_than_finished_at_fast_if_invalid
+    #return if tomorrow
     #binding.pry
-    if started_at.present? && finished_at.present? 
+    if started_at.present? && finished_at.present?
       errors.add(:started_at, "より早い退勤時間は無効です") if started_at > finished_at && tomorrow == false
     end
   end
   
   def renewed_started_at_than_renewed_finished_at_fast_if_invalid
-    #binding.pry
-    if renewed_started_at.present? && renewed_finished_at.present? 
-      errors.add(:renewed_started_at, "より早い退勤時間は無効です") if renewed_started_at > renewed_finished_at && tomorrow == false
+    #return if tomorrow
+    if started_at.present? && finished_at.present? && renewed_started_at.present? && renewed_finished_at.present? && tomorrow == true
+      errors.add(:renewed_started_at, "より早い退勤時間は無効です") if renewed_started_at < renewed_finished_at
+    elsif started_at.blank? && finished_at.blank? && renewed_started_at.present? && renewed_finished_at.present? && tomorrow == true
+      errors.add(:renewed_started_at, "より早い退勤時間は無効です") if renewed_started_at < renewed_finished_at
+    elsif started_at.present? && finished_at.present? && renewed_started_at.present? && renewed_finished_at.present? && tomorrow == false
+      errors.add(:renewed_started_at, "より早い退勤時間は無効です") if renewed_started_at > renewed_finished_at
+    elsif started_at.blank? && finished_at.blank? && renewed_started_at.present? && renewed_finished_at.present? && tomorrow == false
+      errors.add(:renewed_started_at, "より早い退勤時間は無効です") if renewed_started_at > renewed_finished_at
     end
   end
 

@@ -72,7 +72,7 @@
             <% end %>
           </td>
           <td>
-            <% if attendance.started_at.present? && attendance.renewed_started_at.present? %>
+            <% if attendance.started_at.present? %>
               <%= attendance.started_at.hour %>
             <% else if attendance.started_at.present? && attendance.attendance_state == 2 %>
               <%= attendance.started_at.hour %>
@@ -80,7 +80,7 @@
             <% end %>
           </td>
           <td>
-            <% if attendance.started_at.present? && attendance.renewed_started_at.present? %>
+            <% if attendance.started_at.present? %>
               <%= format_min(attendance.started_at) %>
             <% else if attendance.started_at.present? && attendance.attendance_state == 2 %>
               <%= format_min(attendance.started_at) %>
@@ -123,7 +123,7 @@
               <% end %>
           </td>
           <td>
-            <% if attendance.finished_at.present? && attendance.renewed_finished_at.present? %>
+            <% if attendance.finished_at.present? %>
              <%= attendance.finished_at.hour %>
             <% else if attendance.finished_at.present? && attendance.attendance_state == 2 %>
              <%= attendance.finished_at.hour %>
@@ -131,7 +131,7 @@
             <% end %>
           </td>
           <td>
-            <% if attendance.finished_at.present? && attendance.renewed_finished_at.present? %>
+            <% if attendance.finished_at.present? %>
              <%= format_min(attendance.finished_at) %>
             <% else if attendance.finished_at.present? && attendance.attendance_state == 2 %>
              <%= format_min(attendance.finished_at) %>
@@ -143,10 +143,10 @@
              <%= str_times = working_times(attendance.started_at, attendance.finished_at, attendance) %>
              <% @total_working_times = @total_working_times.to_f + str_times.to_f %>
             <% end %>
-            <% if attendance.renewed_finished_at.present? %>
-             <%= str_times = renew_working_times(attendance.renewed_started_at, attendance.renewed_finished_at, attendance) %>
-             <% @renewed_working_times = @renewed_working_times.to_f + str_times.to_f %>
-            <% end %>
+            <%# if attendance.renewed_finished_at.present? %>
+             <%#= str_times = renew_working_times(attendance.renewed_started_at, attendance.renewed_finished_at, attendance) %>
+             <%# @renewed_working_times = @renewed_working_times.to_f + str_times.to_f %>
+            <%# end %>
           </td>
           <td>
             <% if attendance.finished_at.present? && attendance.attendance_state == 2 %>

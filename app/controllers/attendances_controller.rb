@@ -45,10 +45,12 @@ class AttendancesController < ApplicationController
   end
   
   def update_one_month
+    #binding.pry
     ActiveRecord::Base.transaction do # トランザクションを開始します。
     attendances_params.each do |id, item|
       #binding.pry
-    if item[:renewed_started_at] == "" && item[:renewed_finished_at] == "" && item[:description] != "" && item[:superior_choice_id] != ""
+    #if item[:renewed_started_at] == "" || item[:started_at] == "" && item[:renewed_finished_at] == "" || item[:finished_at] == "" && item[:description] != "" && item[:superior_choice_id] != "" && item[:tomorrow] == true || item[:tomorrow] == false
+    if item[:renewed_started_at] == "" && item[:renewed_finished_at] == "" && item[:description] != "" && item[:superior_choice_id] != "" && item[:tomorrow] != ""
       next
     end
      if item[:renewed_started_at].present? && item[:renewed_finished_at].blank?
@@ -102,13 +104,17 @@ class AttendancesController < ApplicationController
       flash[:danger] = "退勤時間のみの勤怠変更はできません"
        redirect_to attendances_edit_one_month_user_url(date: params[:date]) and return
       end
+      #if attendance.renewed_started_at > attendance.renewed_finished_at && item[:tomorrow] == true
+      #flash[:danger] = "出勤時間より早い退勤時間は無効です。"
+       #redirect_to attendances_edit_one_month_user_url(date: params[:date]) and return
+      #end
 
       attendance = Attendance.find_by(id: id)
       if attendance.attendance_state == 2 #承認
         attendance.attributes = item
        if attendance.has_changes_to_save?
          attendance.attendance_state = 1 #申請中
-         attendance.tomorrow = false
+         #attendance.tomorrow = false
          attendance.save!
        end
       else
@@ -121,8 +127,8 @@ class AttendancesController < ApplicationController
   flash[:success] = "勤怠変更を申請しました。"
   redirect_to user_url(date: params[:date])
   rescue ActiveRecord::RecordInvalid # トランザクションによるエラーの分岐です。
-  flash[:danger] = "出勤時間より早い退勤時間は無効です。"
-  redirect_to attendances_edit_one_month_user_url(date: params[:date]) and return
+   flash[:danger] = "出勤時間より早い退勤時間は無効です。"
+   redirect_to attendances_edit_one_month_user_url(date: params[:date]) and return
   end
   
   def edit_overwork_request
@@ -240,7 +246,7 @@ class AttendancesController < ApplicationController
           if ActiveRecord::Type::Boolean.new.cast(item[:change_shift]) && item[:attendance_state] == "3"
             attendance = Attendance.find(id)
             attendance.update!(superior_state: nil, change_shift: nil, description: nil, attendance_state: 3,
-                               renewed_started_at: nil, renewed_finished_at: nil, tomorrow: nil, superior_choice_id: nil
+                               renewed_started_at: nil, renewed_finished_at: nil, superior_choice_id: nil
             )
             flash[:info] = "勤怠申請を否認しました。"
             redirect_to user_path(current_user) and return

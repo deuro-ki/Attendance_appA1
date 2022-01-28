@@ -9,11 +9,11 @@
 #  remember_digest            :string
 #  admin                      :boolean          default(FALSE), not null
 #  department                 :string
-#  basic_time                 :datetime         default(Wed, 26 Jan 2022 08:00:00 JST +09:00), not null
-#  work_time                  :datetime         default(Wed, 26 Jan 2022 07:30:00 JST +09:00), not null
+#  basic_time                 :datetime         default(Fri, 28 Jan 2022 08:00:00 JST +09:00), not null
+#  work_time                  :datetime         default(Fri, 28 Jan 2022 07:30:00 JST +09:00), not null
 #  superior                   :boolean          default(FALSE), not null
-#  designated_work_start_time :datetime         default(Wed, 26 Jan 2022 09:00:00 JST +09:00), not null
-#  designated_work_end_time   :datetime         default(Wed, 26 Jan 2022 18:00:00 JST +09:00), not null
+#  designated_work_start_time :datetime         default(Fri, 28 Jan 2022 09:00:00 JST +09:00), not null
+#  designated_work_end_time   :datetime         default(Fri, 28 Jan 2022 18:00:00 JST +09:00), not null
 #  finish_time                :datetime
 #  affiliation                :string
 #  employee_number            :integer
@@ -99,7 +99,7 @@ class User < ApplicationRecord
  end
  
  def self.updatable_attributes
-  ["name", "email", "affliation", "employee_number", "uid", "basic_work_time", "designated_work_start_time", "designated_work_end_time", "superior", "admin", "password"]
+  ["name", "email", "affiliation", "employee_number", "uid", "basic_time", "designated_work_start_time", "designated_work_end_time", "superior", "admin", "password"]
  end
  
 
