@@ -9,7 +9,7 @@
           <%= form_with model: @user, url: attendances_update_attendance_apply_user_path(@user, @attendance), local: true, method: :patch do |f| %>
             <% @users.each do |user| %>
               <h3 align="center" class="modal-title"><%= "【 #{user.name}からの勤怠変更申請 】" %></h3>
-              <% user.attendances.where(superior_choice: current_user.id).where(attendance_state: 1).each do |attendance|  %>
+              <% user.attendances.where(superior_choice: current_user.id).where(attendance_state: 1).order(worked_on: 'ASC').each do |attendance|  %>
                <table class="table table-bordered table-condensed" id="table-attendances">
                   <thead>
                     <tr>
@@ -64,7 +64,7 @@
                           <td><%= attendance.description %></td>
                           <td><%= attendance_field.select :attendance_state, {"申請中": 1, "承認": 2, "否認": 3, "なし": 4}, class: "form-control", required: true %></td>
                           <td><%= attendance_field.check_box :change_shift, checked: false %></td>
-                          <td><%= link_to "確認", show2_user_path(user), class: "btn btn-primary" %></td>
+                          <td><%= link_to "確認", show2_user_path(user, date: attendance.worked_on&.beginning_of_month.strftime("%F")), class: "btn btn-primary" %></td>
                         </tr>
                       </tbody>
                     <% end %>

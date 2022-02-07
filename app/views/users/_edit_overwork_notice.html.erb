@@ -9,7 +9,7 @@
         <%= form_with(model: @user, url: update_overwork_notice_user_path(@user, @attendance), local: true, method: :patch) do |f| %>
           <% @users.each do |user| %>
             <h3 align="center" class="modal-title"><%= "【 #{user.name}からの残業申請 】" %></h3>
-              <% user.attendances.where(select_superior_id: current_user.id).where(superior_state: 1).each do |attendance| %>
+              <% user.attendances.where(select_superior_id: current_user.id).where(superior_state: 1).order(worked_on: 'ASC').each do |attendance| %>
                    <table class="table table-bordered table-overwork">
                       <thead>
                         <tr>
@@ -44,7 +44,7 @@
                               <td><%= attendance.contents %></td>
                               <th><%= attendance_field.select :superior_state, {"申請中": 1, "承認": 2, "否認": 3, "なし": 4}, class: "form-control", required: true %></th>
                               <th><%= attendance_field.check_box :modification, checked: false %></th>
-                              <th><%= link_to "確認", show2_user_path(user), class: "btn btn-primary" %></th>
+                              <th><%= link_to "確認", show2_user_path(user, date: attendance.worked_on&.beginning_of_month.strftime("%F")), class: "btn btn-primary" %></th>
                             </tr>
                           </tbody>
                         <% end %>

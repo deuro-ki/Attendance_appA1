@@ -71,7 +71,7 @@
 <div class="csv_holder">
   <%= form_tag "import_user_path", method: :post, multipart: true do |f| %>
     <div class="search_item">
-      <%= link_to 'CSVを出力', user_path(@user, @user, params:{first_day: @first_day}, format: :csv), class: "btn btn-primary" %>
+      <%= link_to 'CSVを出力', user_path(@user, date: @first_day.strftime("%F"), format: :csv), class: "btn btn-primary" %>
     </div>
   <% end %>
 </div><br>

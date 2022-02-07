@@ -8,7 +8,7 @@ class UsersController < ApplicationController
   before_action :admin_or_correct_user, only: [:show, :edit, :index, :update, :edit_one_month, :update_one_month, :edit_attendance_log]
   before_action :admin_user, only: [:destroy, :edit_basic_info, :update_basic_info]
   before_action :set_one_month, only: [:show, :show2]
-  before_action :superior_user, only: [:show2]
+  #before_action :superior_user, only: [:show2]
 
   def index
     #binding.pry
@@ -16,7 +16,7 @@ class UsersController < ApplicationController
     #@users = User.where(params[:search])
     #end
   
-    @users =  User.all
+    @users =  User.where.not(id: 1)
     
     @users = @users.where('name LIKE?', "%#{params[:search]}%") if params[:search].present?
     #respond_to do |format|
@@ -68,11 +68,19 @@ class UsersController < ApplicationController
   
   def applicants
    @working_in_users = User.includes(:attendances)
+   unless current_user.admin?
+    flash[:danger] = "閲覧権限がありません。"
+    redirect_to root_path
+   end
   end
 
   def show
     #binding.pry
    @user = User.find(params[:id])
+   if current_user.admin?
+     flash[:danger] = "管理者は閲覧権限がありません。"
+     redirect_to root_url
+   end
    #@attendance = @user.attendances.find_by(worked_on: Date.today)
    #if @user == current_user || current_user.admin?
     #@first_day = Date.current.beginning_of_month
@@ -139,9 +147,9 @@ class UsersController < ApplicationController
   def show2
     #@user = User.where.not(id: current_user.id)
     user = User.find(params[:id])
-    @first_day = params[:date]&.to_date || Date.current.beginning_of_month
+    @first_day = params[:date]&.to_date&.beginning_of_month || Date.current.beginning_of_month
     @last_day = @first_day.end_of_month
-    @attendances = user.attendances.where(worked_on: @first_day..@last_day).order(:worked_on)
+    #@attendances = user.attendances.where(worked_on: @first_day..@last_day).order(:worked_on)
     @worked_sum = @attendances.where.not(started_at: nil).count
     @beginning_of_month_attendance = user.attendances.find_by(worked_on: @first_day)
    #@overtime = Attendance.where(indicator_reply: "申請中", indicator_check: @user.name).count
@@ -158,13 +166,13 @@ class UsersController < ApplicationController
   def create
     @user = User.new(user_params)
     if @user.save
-      (Date.parse('2021-01-01')..Date.parse('2022-12-31')).select{|d| d.day == 1}.each do |day|
-        first_day = day
+      #(Date.parse('2021-01-01')..Date.parse('2022-12-31')).select{|d| d.day == 1}.each do |day|
+        #first_day = day
         #first_day = Date.current.beginning_of_month
-        last_day = first_day.end_of_month
-        one_month = [*first_day..last_day]
-        one_month.each {|day| @user.attendances.create!(worked_on: day)}
-      end
+        #last_day = first_day.end_of_month
+        #one_month = [*first_day..last_day]
+        #one_month.each {|day| @user.attendances.create!(worked_on: day)}
+      #end
       flash[:success] = '新規作成に成功しました。'
       log_in @user
       redirect_to @user
@@ -176,6 +184,10 @@ class UsersController < ApplicationController
   
   def edit
     @user = User.find(params[:id])
+    if current_user.admin?
+      flash[:danger] = "閲覧権限がありません。"
+      redirect_to root_path
+    end
   end
   
   #def edit2
@@ -239,10 +251,10 @@ class UsersController < ApplicationController
           if ActiveRecord::Type::Boolean.new.cast(item[:modification]) && item[:superior_state] == "2"
             attendance = Attendance.find(id)
             attendance.update_attributes!(item)
+            flash[:success] = "残業申請を承認しました。"
           end
           if ActiveRecord::Type::Boolean.new.cast(item[:modification]) && item[:superior_state] == "1"
             flash[:danger] = "指示者確認㊞ステータスを変更してください。"
-            redirect_to user_path(current_user) and return
           end
           if ActiveRecord::Type::Boolean.new.cast(item[:modification]) && item[:superior_state] == "3"
             attendance = Attendance.find(id)
@@ -250,7 +262,6 @@ class UsersController < ApplicationController
                                           modification: nil, select_superior_id: nil, superior_state: 3
             )
             flash[:info] = "残業申請を否認しました。"
-            redirect_to user_path(current_user) and return
           end
           if ActiveRecord::Type::Boolean.new.cast(item[:modification]) && item[:superior_state] == "4"
             attendance = Attendance.find(id)
@@ -258,11 +269,9 @@ class UsersController < ApplicationController
                                           modification: nil, select_superior_id: nil, superior_state: 4
             )
             flash[:info] = "残業申請を削除しました。"
-            redirect_to user_path(current_user) and return
           end
         end
       end
-      flash[:success] = "残業申請を承認しました。"
       redirect_to user_path(current_user) and return
   end
   
@@ -288,7 +297,7 @@ class UsersController < ApplicationController
     def admin_or_correct_user
      unless current_user?(@user) || current_user.admin?
        #binding.pry
-       flash[:danger] = "編集権限がありません。"
+       flash[:danger] = "閲覧権限がありません。"
        redirect_to(root_url)
      end
     end

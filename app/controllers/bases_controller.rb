@@ -3,10 +3,18 @@ class BasesController < ApplicationController
   
   def index
     @bases = Base.all.order(base_number: :ASC)
+    unless current_user.admin?
+     flash[:danger] = "閲覧権限がありません。"
+     redirect_to root_path
+    end
   end
   
   def edit
     @base = Base.find(params[:id])
+    unless current_user.admin?
+     flash[:danger] = "閲覧権限がありません。"
+     redirect_to root_path
+    end
   end
   
   def new_base_info
