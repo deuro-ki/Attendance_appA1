@@ -53,9 +53,11 @@ ActiveRecord::Schema.define(version: 20211227114337) do
     t.boolean "change_month"
     t.string "description"
     t.integer "attendance_state"
+    t.integer "previous_attendance_state"
     t.integer "superior_choice_id"
     t.string "one_month_superior_status"
     t.string "overwork_superior_status"
+    t.string "attendance_superior_status"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["one_month_superior_id"], name: "index_attendances_on_one_month_superior_id"
@@ -79,11 +81,11 @@ ActiveRecord::Schema.define(version: 20211227114337) do
     t.string "remember_digest"
     t.boolean "admin", default: false, null: false
     t.string "department"
-    t.datetime "basic_time", default: "2022-02-06 23:00:00", null: false
-    t.datetime "work_time", default: "2022-02-06 22:30:00", null: false
+    t.datetime "basic_time", default: "2022-02-17 23:00:00", null: false
+    t.datetime "work_time", default: "2022-02-17 22:30:00", null: false
     t.boolean "superior", default: false, null: false
-    t.datetime "designated_work_start_time", default: "2022-02-07 00:00:00", null: false
-    t.datetime "designated_work_end_time", default: "2022-02-07 09:00:00", null: false
+    t.datetime "designated_work_start_time", default: "2022-02-18 00:00:00", null: false
+    t.datetime "designated_work_end_time", default: "2022-02-18 09:00:00", null: false
     t.datetime "finish_time"
     t.string "affiliation"
     t.integer "employee_number"

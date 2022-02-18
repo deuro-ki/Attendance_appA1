@@ -106,6 +106,7 @@ class UsersController < ApplicationController
     @over_apply = User.where(superior: true).where.not(id: current_user)
     @attendance_apply = User.where(superior: true).where.not(id: current_user)
     @beginning_of_month_attendance = user.attendances.find_by(worked_on: @first_day)
+    @change_application = user.attendances.find_by(worked_on: @first_day)
    #binding.pry
    #else
      #redirect_to root_url
@@ -153,6 +154,18 @@ class UsersController < ApplicationController
     @worked_sum = @attendances.where.not(started_at: nil).count
     @beginning_of_month_attendance = user.attendances.find_by(worked_on: @first_day)
    #@overtime = Attendance.where(indicator_reply: "申請中", indicator_check: @user.name).count
+    @attendances = user.attendances.where(worked_on: @first_day..@last_day).order(:worked_on)
+    @one_month_apply_count = Attendance.where(one_month_superior_id: current_user.id).where(one_month_status: 1).count
+    #binding.pry
+    @apply_attendances_count = Attendance.where.not(renewed_finished_at: nil).where(superior_choice_id: current_user.id).where(attendance_state: 1).count
+    #binding.pry
+    @overwork_time_count =  Attendance.where.not(contents: nil).where(select_superior_id: current_user.id).where(superior_state: 1).count
+    #binding.pry
+    @superiors = User.where(superior: true).where.not(id: current_user)
+    @attendance = Attendance.find(params[:id])
+    @over_apply = User.where(superior: true).where.not(id: current_user)
+    @attendance_apply = User.where(superior: true).where.not(id: current_user)
+    @change_application = user.attendances.find_by(worked_on: @first_day)
   end
   
   def new
@@ -173,7 +186,7 @@ class UsersController < ApplicationController
         #one_month = [*first_day..last_day]
         #one_month.each {|day| @user.attendances.create!(worked_on: day)}
       #end
-      flash[:success] = '新規作成に成功しました。'
+      flash[:success] = 'ユーザー新規登録に成功しました。'
       log_in @user
       redirect_to @user
       # 保存に成功した場合は、ここに記述した処理が実行されます。
@@ -184,6 +197,9 @@ class UsersController < ApplicationController
   
   def edit
     @user = User.find(params[:id])
+    #if params[:password] != params[:password_confirmation]
+      #flash[:danger] = "更新に失敗しました。"
+    #end
     if current_user.admin?
       flash[:danger] = "閲覧権限がありません。"
       redirect_to root_path
@@ -251,7 +267,7 @@ class UsersController < ApplicationController
           if ActiveRecord::Type::Boolean.new.cast(item[:modification]) && item[:superior_state] == "2"
             attendance = Attendance.find(id)
             attendance.update_attributes!(item)
-            flash[:success] = "残業申請を承認しました。"
+            flash[:success] = "残業申請の処理を完了しました。"
           end
           if ActiveRecord::Type::Boolean.new.cast(item[:modification]) && item[:superior_state] == "1"
             flash[:danger] = "指示者確認㊞ステータスを変更してください。"
@@ -261,14 +277,14 @@ class UsersController < ApplicationController
             attendance.update_attributes!(finish_time: nil, next_day_check: nil, contents: nil, 
                                           modification: nil, select_superior_id: nil, superior_state: 3
             )
-            flash[:info] = "残業申請を否認しました。"
+            flash[:success] = "残業申請の処理を完了しました。"
           end
           if ActiveRecord::Type::Boolean.new.cast(item[:modification]) && item[:superior_state] == "4"
             attendance = Attendance.find(id)
             attendance.update_attributes!(finish_time: nil, next_day_check: nil, contents: nil, 
                                           modification: nil, select_superior_id: nil, superior_state: 4
             )
-            flash[:info] = "残業申請を削除しました。"
+            flash[:success] = "残業申請の処理を完了しました。"
           end
         end
       end
@@ -278,7 +294,7 @@ class UsersController < ApplicationController
   
   private
     def user_params
-     params.require(:user).permit(:name, :email, :affiliation, :employee_number, :uid, :password, :basic_time, :designated_work_start_time, :designated_work_end_time)
+     params.require(:user).permit(:name, :email, :affiliation, :employee_number, :uid, :password, :password_confirmation, :basic_time, :designated_work_start_time, :designated_work_end_time)
     end
     
     def attendances_params

@@ -41,7 +41,7 @@ class AttendancesController < ApplicationController
     #first_day = Date.current.beginning_of_month
     #last_day = first_day.end_of_month
     #@attendances = user.attendances.where(worked_on: first_day..last_day).order(:worked_on)
-    @attendance_apply = User.where(id: 2..3).where.not(id: current_user)
+    @attendance_apply = User.where(superior: true).where.not(id: current_user)
   end
   
   def update_one_month
@@ -116,6 +116,7 @@ class AttendancesController < ApplicationController
       #end
 
       attendance = Attendance.find_by(id: id)
+      #binding.pry
       if attendance.attendance_state == 2 #承認
         attendance.attributes = item
        if attendance.has_changes_to_save?
@@ -124,8 +125,11 @@ class AttendancesController < ApplicationController
          attendance.save!
        end
       else
+        attendance.attributes = item
+       if attendance.has_changes_to_save?
         attendance.attendance_state = 1
-        attendance.update!(item)
+        attendance.save!
+       end
       end
       #binding.pry
    end
@@ -143,7 +147,7 @@ class AttendancesController < ApplicationController
     @user = User.find(params[:user_id])
     @attendance = Attendance.find(params[:id])
     @current_user = User.find(params[:user_id])
-    @over_apply = User.where(id: 2..3).where.not(id: current_user)
+    @over_apply = User.where(superior: true).where.not(id: current_user)
   end
    
    
@@ -151,6 +155,10 @@ class AttendancesController < ApplicationController
     @user = User.find(params[:user_id])
     @attendance = Attendance.find(params[:id])
     @attendance.attributes = update_overwork_request_params
+    if @attendance.next_day_check == false && @attendance.finish_time.hour < @user.designated_work_end_time.hour
+      flash[:danger] = "残業申請に失敗しました。"
+      redirect_to user_url(@user, date: @attendance.worked_on&.beginning_of_month.strftime("%F")) and return
+    end
     if @attendance.save(context: :update_overwork_request)
       flash[:success] = "残業を申請しました。"
       redirect_to user_url(@user, date: @attendance.worked_on&.beginning_of_month.strftime("%F"))
@@ -185,7 +193,7 @@ class AttendancesController < ApplicationController
     #@first_day = Date.current.beginning_of_month
     #@users = User.where.not(id: 1).where.not(id: current_user.id)
     @user = User.find(params[:id])
-    @attendances = Attendance.where(one_month_superior_status: '申請中', one_month_status: 1, one_month_superior: @user.id).order(user_id: "ASC", updated_at: "DESC").group_by(&:user_id)
+    @attendances = Attendance.where(one_month_superior_status: '申請中', one_month_status: 1, one_month_superior: @user.id).order(user_id: "ASC", worked_on: 'ASC').group_by(&:user_id)
   end
   
   def update_one_month_apply
@@ -194,7 +202,7 @@ class AttendancesController < ApplicationController
         if ActiveRecord::Type::Boolean.new.cast(item[:change_month]) && item[:one_month_status] == "2"
           attendance = Attendance.find(id)
           attendance.update!(one_month_status: item[:one_month_status])
-          flash[:success] = "１カ月分の勤怠を承認しました。"
+          flash[:success] = "１カ月分勤怠申請の処理を完了しました。"
         end
         if ActiveRecord::Type::Boolean.new.cast(item[:change_month]) && item[:one_month_status] == "1"
           flash[:danger] = "指示者確認㊞ステータスを変更してください。"
@@ -202,12 +210,12 @@ class AttendancesController < ApplicationController
         if ActiveRecord::Type::Boolean.new.cast(item[:change_month]) && item[:one_month_status] == "3"
           attendance = Attendance.find(id)
           attendance.update!(one_month_superior_id: nil,  one_month_superior_status: nil, one_month_status: 3)
-          flash[:info] = "１カ月分の勤怠を否認しました。"
+          flash[:success] = "１カ月分勤怠申請の処理を完了しました。"
         end
         if ActiveRecord::Type::Boolean.new.cast(item[:change_month]) && item[:one_month_status] == "4"
           attendance = Attendance.find(id)
           attendance.update!(one_month_superior_id: nil,  one_month_superior_status: nil, one_month_status: 4)
-          flash[:info] = "１カ月分の勤怠を削除しました。"
+          flash[:success] = "１カ月分勤怠申請の処理を完了しました。"
         end
       end
     end
@@ -251,7 +259,7 @@ class AttendancesController < ApplicationController
                                attendance_state: item[:attendance_state],
                                change_shift: item[:change_shift]
             )
-            flash[:success] = "勤怠申請を承認しました。"
+            flash[:success] = "勤怠変更申請の処理を完了しました。"
             #binding.pry
           end
           if ActiveRecord::Type::Boolean.new.cast(item[:change_shift]) && item[:attendance_state] == "1"
@@ -263,7 +271,7 @@ class AttendancesController < ApplicationController
             attendance.update!(superior_state: nil, change_shift: nil, description: nil, attendance_state: 3,
                                renewed_started_at: nil, renewed_finished_at: nil, tomorrow: nil, superior_choice_id: nil
             )
-            flash[:info] = "勤怠申請を否認しました。"
+            flash[:success] = "勤怠変更申請の処理を完了しました。"
           end
           
           if ActiveRecord::Type::Boolean.new.cast(item[:change_shift]) && item[:attendance_state] == "4"
@@ -271,10 +279,11 @@ class AttendancesController < ApplicationController
             attendance.update!(superior_state: nil, change_shift: nil, description: nil, attendance_state: 4,
                                renewed_started_at: nil, renewed_finished_at: nil, tomorrow: nil, superior_choice_id: nil
             )
-            flash[:info] = "勤怠申請を削除しました。"
+            flash[:success] = "勤怠変更申請の処理を完了しました。"
           end
         end
     end
+    #flash[:success] = "勤怠申請処理が完了しました。"
     redirect_to user_path(current_user) and return
   #rescue
     #flash[:danger] = "チェックを入れてください。"

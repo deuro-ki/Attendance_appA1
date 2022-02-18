@@ -26,9 +26,11 @@
 #  change_month                    :boolean
 #  description                     :string
 #  attendance_state                :integer
+#  previous_attendance_state       :integer
 #  superior_choice_id              :integer
 #  one_month_superior_status       :string
 #  overwork_superior_status        :string
+#  attendance_superior_status      :string
 #  created_at                      :datetime         not null
 #  updated_at                      :datetime         not null
 #

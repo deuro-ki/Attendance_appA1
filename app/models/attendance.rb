@@ -26,9 +26,11 @@
 #  change_month                    :boolean
 #  description                     :string
 #  attendance_state                :integer
+#  previous_attendance_state       :integer
 #  superior_choice_id              :integer
 #  one_month_superior_status       :string
 #  overwork_superior_status        :string
+#  attendance_superior_status      :string
 #  created_at                      :datetime         not null
 #  updated_at                      :datetime         not null
 #
@@ -44,6 +46,7 @@ class Attendance < ApplicationRecord
   belongs_to :select_superior, class_name: 'User', optional: true
   belongs_to :one_month_superior, class_name: 'User', optional: true
   belongs_to :superior_choice, class_name: 'User', optional: true
+  before_validation :set_prev_attendance_state, if: 'self.attendance_state_changed?'
   
   validates :worked_on, presence: true
   validates :note, length: { maximum: 50 }
@@ -86,6 +89,15 @@ class Attendance < ApplicationRecord
 
   def finished_at_is_invalid_without_a_started_at
     errors.add(:started_at, "が必要です") if started_at.blank? && finished_at.present?
+  end
+  private
+  
+  
+  def set_prev_attendance_state
+    #binding.pry
+    unless attendance_state_in_database == 1
+     self.previous_attendance_state = attendance_state_in_database
+    end
   end
   
   

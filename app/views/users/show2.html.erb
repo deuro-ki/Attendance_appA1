@@ -60,6 +60,7 @@
 
     <tbody>
       <% @attendances.each do |attendance| %>
+      <%# binding.pry %>
         <tr>
           <td><%= l(attendance.worked_on, format: :short) %></td>
           <td>
@@ -103,10 +104,8 @@
             <% end %>
           </td>
           <td>
-            <% if attendance.select_superior_id == 2 && attendance.contents.present? && attendance.superior_state == 1 %>
-             <%= "上長Aに残業申請中" %><br>
-            <% elsif attendance.select_superior_id == 3 && attendance.contents.present? && attendance.superior_state == 1 %>
-             <%= "上長Bに残業申請中" %><br>
+            <% if attendance.select_superior_id != nil && attendance.superior_state == 1 %>
+             <span class= "over"><%= attendance.select_superior&.name %></span>に残業申請中<br>
             <% end %>
             <% if attendance.superior_state == 2 %>
              <h5 style = "color :blue">残業申請承認済み</h5>
@@ -154,16 +153,24 @@
             <% end %>
           </td>
           <td>
-            <% if attendance.superior_choice_id == 2 && attendance.description.present? && attendance.attendance_state == 1 %>
-             <%= "上長Aに勤怠変更申請中" %>
-            <% elsif attendance.superior_choice_id == 3 && attendance.description.present? && attendance.attendance_state == 1 %>
-             <%= "上長Bに勤怠変更申請中" %>
+            <% if attendance.superior_choice_id != nil && attendance.attendance_state == 1 %>
+             <span class= "change"><%= attendance.superior_choice&.name %></span>に勤怠変更申請中<br>
             <% end %>
             <% if attendance.attendance_state == 2 %>
              <h5 style = "color :blue">勤怠変更承認済み</h5>
             <% end %>
             <% if attendance.attendance_state == 3 %>
              <h5 style = "color :red">勤怠変更否認</h5>
+            <% end %>
+            
+            <% if attendance.attendance_state == 4 && attendance.previous_attendance_state == 2 %>
+            <%# binding.pry %>
+              <h5 style = "color :blue">勤怠変更承認済み</h5>
+            <% end %>
+            
+            <% if attendance.attendance_state == 4 && attendance.previous_attendance_state == 3 %>
+            <%# binding.pry %>
+              <h5 style = "color :red">勤怠変更否認</h5>
             <% end %>
           </td>
         </tr>
@@ -190,7 +197,7 @@
         <td></td>
         <td colspan="5">
           <% if @beginning_of_month_attendance.one_month_superior_status == '申請中' && @beginning_of_month_attendance.one_month_status == 1 %>
-            <h5><%= @beginning_of_month_attendance.one_month_superior&.name %>に所属長承認申請中</h5>
+            <span class= "leader"><%= @beginning_of_month_attendance.one_month_superior&.name %></span>に所属長承認申請中
           <% else if @beginning_of_month_attendance.one_month_status == nil %>
             <h5>所属長承認: 未申請</h5>
           <% end %>

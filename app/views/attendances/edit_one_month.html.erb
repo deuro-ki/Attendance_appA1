@@ -45,7 +45,7 @@
                </td>
                <td rowspan><%= attendance_field.text_field :description, placeholder: "内容を記入してください", readonly: true, class: "form-control" %></td>
                <td rowspan>
-                <%= attendance_field.collection_select :superior_choice_id, @attendance_apply, :id, :name, :prompt => "選択できません", disabled: 2..3 %>
+                <%= attendance_field.collection_select :superior_choice_id, @attendance_apply, :id, :name, {:prompt => "選択できません"}, disabled: true %>
                </td>
               <% else %>
                <td rowspan><%= attendance_field.time_field :renewed_started_at, class: "form-control" %></td>

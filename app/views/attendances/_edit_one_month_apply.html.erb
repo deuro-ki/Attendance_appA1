@@ -28,6 +28,7 @@
                           <td colspan="3"><%= link_to "確認", show2_user_path(user_id, date: attendance.worked_on&.beginning_of_month.strftime("%F")), class: "btn btn-primary" %></td>
                         </tr>
                       </tbody>
+                      <%# binding.pry %>
                     <% end %>
                   <% end %>
               </table>

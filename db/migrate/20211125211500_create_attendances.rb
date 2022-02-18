@@ -24,9 +24,11 @@ class CreateAttendances < ActiveRecord::Migration[5.1]
       t.boolean :change_month
       t.string :description
       t.integer :attendance_state
+      t.integer :previous_attendance_state
       t.references :superior_choice, foreign_key: { to_table: :users }, null: true, comment: "勤怠変更時の上長"
       t.string :one_month_superior_status
       t.string :overwork_superior_status
+      t.string :attendance_superior_status
       t.timestamps 
     end
   end
