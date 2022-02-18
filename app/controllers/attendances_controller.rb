@@ -42,6 +42,10 @@ class AttendancesController < ApplicationController
     #last_day = first_day.end_of_month
     #@attendances = user.attendances.where(worked_on: first_day..last_day).order(:worked_on)
     @attendance_apply = User.where(superior: true).where.not(id: current_user)
+    if current_user.admin?
+      flash[:danger] = "管理者は閲覧権限がありません。"
+    redirect_to root_path
+    end
   end
   
   def update_one_month
