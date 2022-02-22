@@ -272,7 +272,7 @@ class AttendancesController < ApplicationController
           
           if ActiveRecord::Type::Boolean.new.cast(item[:change_shift]) && item[:attendance_state] == "3"
             attendance = Attendance.find(id)
-            attendance.update!(superior_state: nil, change_shift: nil, description: nil, attendance_state: 3,
+            attendance.update!(change_shift: nil, description: nil, attendance_state: 3,
                                renewed_started_at: nil, renewed_finished_at: nil, tomorrow: nil, superior_choice_id: nil
             )
             flash[:success] = "勤怠変更申請の処理を完了しました。"
@@ -280,7 +280,7 @@ class AttendancesController < ApplicationController
           
           if ActiveRecord::Type::Boolean.new.cast(item[:change_shift]) && item[:attendance_state] == "4"
             attendance = Attendance.find(id)
-            attendance.update!(superior_state: nil, change_shift: nil, description: nil, attendance_state: 4,
+            attendance.update!(change_shift: nil, description: nil, attendance_state: 4,
                                renewed_started_at: nil, renewed_finished_at: nil, tomorrow: nil, superior_choice_id: nil
             )
             flash[:success] = "勤怠変更申請の処理を完了しました。"
